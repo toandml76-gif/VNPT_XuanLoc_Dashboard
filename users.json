@@ -1,0 +1,38 @@
+[
+    {
+        "cccd": "admin",
+        "ten": "Administrator",
+        "password": "scrypt:32768:8:1$8S3UyEkVRC9pcOAm$29487f020c1001905d3bbe4b94ed6d103463c067b80086f1d21de297c6ae3524cac76a7f4cc76988277e5add1f20d8507b693c8d010aa5fc1b2fda1e360ded3e",
+        "role": "Admin"
+    },
+    {
+        "cccd": "12345",
+        "ten": "Trần Lê Anh Minh",
+        "password": "scrypt:32768:8:1$DQmqilrfSM9QFwlG$e7aab812ac32d77167486e19f1d8436a8f939666554f01e9716f6842b5451ab5636dfd02ec6606b3d9bc9a8689c266bf1beedd42cab32fadff96b955ad6848d0",
+        "role": "Admin"
+    },
+    {
+        "cccd": "678910",
+        "ten": "Lê Hồng Phong",
+        "password": "scrypt:32768:8:1$C0zVm1BiZHLcxqC3$790b54c0071a82e28bcb7a854649fe35e24eb7c6915d987b81ea4e9593f81ed3c5ac923fb7b5b1a9caa683b9ba93000ed1f867c5d9399ae7478f8b67b8d68df4",
+        "role": "Nhân viên"
+    },
+    {
+        "cccd": "123456",
+        "ten": "Đặng Hữu Danh",
+        "password": "scrypt:32768:8:1$sUP637X4STOz9UPD$e895df16be8bf52f23b0255a65d4fe0a86c6481475509c88b76a8e21b1e610a6ea01b48c338ed317c5f2b7983725f84d6dd4124bd73c2124ad8782776a0046b5",
+        "role": "Nhân viên"
+    },
+    {
+        "cccd": "11111",
+        "ten": "Lê Hồng Phong",
+        "password": "scrypt:32768:8:1$PypQFJxOWcp0tt1z$69728465829d82694024d49db879c06cef8288f1cccd7c557c82a546620c3b57d510fc007e54201d4b0e0271e8e88c0674aae4820291232a9e7a783d14cf6436",
+        "role": "Nhân viên"
+    },
+    {
+        "cccd": "22222",
+        "ten": "Trần Trung Giang",
+        "password": "scrypt:32768:8:1$Ho6tCcw2Ad8IyVkK$f4a0733717edd565e932a4d1d846f96ef54c9102f010ef504527d4642a038c6d1e18fb18f82382574a605b4797a483eea7c2122d780d9256e60d31e389c11c66",
+        "role": "Nhân viên"
+    }
+]

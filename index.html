@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VNPT Xuân Lộc - Hệ Thống Báo Cáo Kỹ Thuật</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Login View -->
+    <div id="loginView" class="view active-view">
+        <div class="login-container">
+            <div class="login-box glass-panel">
+                <div class="logo-container">
+                    <h1 class="gradient-text">VNPT Xuân Lộc</h1>
+                    <p>Hệ Thống Quản Lý Báo Cáo & Thống Kê</p>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="cccd">Tên đăng nhập (CCCD)</label>
+                        <input type="text" id="cccd" required placeholder="Nhập tên đăng nhập">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mật khẩu</label>
+                        <input type="password" id="password" required placeholder="Nhập mật khẩu">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Đăng Nhập</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard View -->
+    <div id="dashboardView" class="view">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h3>VNPT Xuân Lộc Dashboard</h3>
+            </div>
+            <div class="nav-user">
+                <span id="userNameDisplay">Chào, User</span>
+                <span id="userRoleBadge" class="badge">Role</span>
+                <button id="btnLogout" class="btn btn-danger btn-sm">Thoát</button>
+            </div>
+        </nav>
+
+        <div class="layout-container">
+            <!-- Sidebar -->
+            <aside class="sidebar glass-panel">
+                <ul class="nav-links">
+                    <li><a href="#" class="active" data-target="panel-day">Tổng Hợp Ngày</a></li>
+                    <li><a href="#" data-target="panel-week">Tổng Hợp Tuần</a></li>
+                    <li><a href="#" data-target="panel-month">Tổng Hợp Tháng</a></li>
+                    <li><a href="#" data-target="panel-custom">Thời Gian Tùy Chọn</a></li>
+                    <li><a href="#" data-target="panel-account">Tài Khoản Cá Nhân</a></li>
+                    <li id="menuAdmin" class="hidden"><a href="#" data-target="panel-admin"
+                            style="color:var(--danger)">Quản Trị Hệ Thống</a></li>
+                </ul>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+
+                <!-- Day Panel -->
+                <section id="panel-day" class="panel active-panel">
+                    <h2>Tổng Hợp Ngày</h2>
+                    <div class="filter-bar glass-panel mt-2"
+                        style="padding: 1rem; display:flex; gap: 1rem; align-items:flex-end;">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Chọn Ngày</label>
+                            <input type="date" id="filterDay" class="form-control">
+                        </div>
+                        <button class="btn btn-primary" onclick="window.fetchDayStats()">Xem Thống Kê</button>
+                        <button class="btn btn-success" onclick="window.exportTableToExcel('tableDay', 'day')">Xuất
+                            Excel</button>
+                    </div>
+                    <h3 id="dayTitle" class="mt-4 filter-title text-center" style="color:var(--primary)"></h3>
+                    <div class="chart-container glass-panel mt-2"><canvas id="chartDay"></canvas></div>
+                    <div class="table-container glass-panel mt-4">
+                        <table class="styled-table" id="tableDay">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Week Panel -->
+                <section id="panel-week" class="panel">
+                    <h2>Tổng Hợp Tuần</h2>
+                    <div class="filter-bar glass-panel mt-2"
+                        style="padding: 1rem; display:flex; gap: 1rem; align-items:flex-end;">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Tháng</label>
+                            <select id="filterWeekMonth" class="form-control" style="padding:0.75rem 1rem">
+                                <option value="1">Tháng 1</option>
+                                <option value="2">Tháng 2</option>
+                                <option value="3">Tháng 3</option>
+                                <option value="4">Tháng 4</option>
+                                <option value="5">Tháng 5</option>
+                                <option value="6">Tháng 6</option>
+                                <option value="7">Tháng 7</option>
+                                <option value="8">Tháng 8</option>
+                                <option value="9">Tháng 9</option>
+                                <option value="10">Tháng 10</option>
+                                <option value="11">Tháng 11</option>
+                                <option value="12">Tháng 12</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Năm</label>
+                            <input type="number" id="filterWeekYear" class="form-control" value="2026">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Tuần</label>
+                            <select id="filterWeekNum" class="form-control" style="padding:0.75rem 1rem">
+                                <option value="1">Tuần 1</option>
+                                <option value="2">Tuần 2</option>
+                                <option value="3">Tuần 3</option>
+                                <option value="4">Tuần 4</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="window.fetchWeekStats()">Xem Thống Kê</button>
+                        <button class="btn btn-success" onclick="window.exportTableToExcel('tableWeek', 'week')">Xuất
+                            Excel</button>
+                    </div>
+                    <h3 id="weekTitle" class="mt-4 filter-title text-center" style="color:var(--primary)"></h3>
+                    <div class="chart-container glass-panel mt-2"><canvas id="chartWeek"></canvas></div>
+                    <div class="table-container glass-panel mt-4">
+                        <table class="styled-table" id="tableWeek">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Bán Fiber</th>
+                                    <th>Bán MyTV</th>
+                                    <th>Bán Camera_Mesh</th>
+                                    <th>Ngưng Fiber</th>
+                                    <th>Ngưng Mytv</th>
+                                    <th>Chuyển ONT 2B</th>
+                                    <th>Chuyển XGSPON</th>
+                                    <th>GHTT tháng T</th>
+                                    <th>GHTT tháng T+1</th>
+                                    <th>Lắp đặt/Dịch chuyển</th>
+                                    <th>Thu hồi ONT 2B</th>
+                                    <th>Thu hồi Mesh</th>
+                                    <th>Xử Lý Suy Hao</th>
+                                    <th>Sửa chữa</th>
+                                    <th>B2A</th>
+                                    <th>Tiền Suy Hao</th>
+                                    <th>Tổng Điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Month Panel -->
+                <section id="panel-month" class="panel">
+                    <h2>Tổng Hợp Tháng</h2>
+                    <div class="filter-bar glass-panel mt-2"
+                        style="padding: 1rem; display:flex; gap: 1rem; align-items:flex-end;">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Tháng</label>
+                            <select id="filterMonthMonth" class="form-control" style="padding:0.75rem 1rem">
+                                <option value="1">Tháng 1</option>
+                                <option value="2">Tháng 2</option>
+                                <option value="3">Tháng 3</option>
+                                <option value="4">Tháng 4</option>
+                                <option value="5">Tháng 5</option>
+                                <option value="6">Tháng 6</option>
+                                <option value="7">Tháng 7</option>
+                                <option value="8">Tháng 8</option>
+                                <option value="9">Tháng 9</option>
+                                <option value="10">Tháng 10</option>
+                                <option value="11">Tháng 11</option>
+                                <option value="12">Tháng 12</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Năm</label>
+                            <input type="number" id="filterMonthYear" class="form-control" value="2026">
+                        </div>
+                        <button class="btn btn-primary" onclick="window.fetchMonthStats()">Xem Thống Kê</button>
+                        <button class="btn btn-success" onclick="window.exportTableToExcel('tableMonth', 'month')">Xuất
+                            Excel</button>
+                    </div>
+                    <h3 id="monthTitle" class="mt-4 filter-title text-center" style="color:var(--primary)"></h3>
+                    <div class="chart-container glass-panel mt-2"><canvas id="chartMonth"></canvas></div>
+                    <div class="table-container glass-panel mt-4">
+                        <table class="styled-table" id="tableMonth">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Bán Fiber</th>
+                                    <th>Bán MyTV</th>
+                                    <th>Bán Camera_Mesh</th>
+                                    <th>Ngưng Fiber</th>
+                                    <th>Ngưng Mytv</th>
+                                    <th>Chuyển ONT 2B</th>
+                                    <th>Chuyển XGSPON</th>
+                                    <th>GHTT tháng T</th>
+                                    <th>GHTT tháng T+1</th>
+                                    <th>Lắp đặt/Dịch chuyển</th>
+                                    <th>Thu hồi ONT 2B</th>
+                                    <th>Thu hồi Mesh</th>
+                                    <th>Xử Lý Suy Hao</th>
+                                    <th>Sửa chữa</th>
+                                    <th>B2A</th>
+                                    <th>Tiền Suy Hao</th>
+                                    <th>Tổng Điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Custom Panel -->
+                <section id="panel-custom" class="panel">
+                    <h2>Thời Gian Tùy Chọn</h2>
+                    <div class="filter-bar glass-panel mt-2"
+                        style="padding: 1rem; display:flex; gap: 1rem; align-items:flex-end;">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Từ ngày</label>
+                            <input type="date" id="filterCustomStart" class="form-control">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label>Đến ngày</label>
+                            <input type="date" id="filterCustomEnd" class="form-control">
+                        </div>
+                        <button class="btn btn-primary" onclick="window.fetchCustomStats()">Xem Thống Kê</button>
+                        <button class="btn btn-success"
+                            onclick="window.exportTableToExcel('tableCustom', 'custom')">Xuất Excel</button>
+                    </div>
+                    <h3 id="customTitle" class="mt-4 filter-title text-center" style="color:var(--primary)"></h3>
+                    <div class="chart-container glass-panel mt-2"><canvas id="chartCustom"></canvas></div>
+                    <div class="table-container glass-panel mt-4">
+                        <table class="styled-table" id="tableCustom">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Bán Fiber</th>
+                                    <th>Bán MyTV</th>
+                                    <th>Bán Camera_Mesh</th>
+                                    <th>Ngưng Fiber</th>
+                                    <th>Ngưng Mytv</th>
+                                    <th>Chuyển ONT 2B</th>
+                                    <th>Chuyển XGSPON</th>
+                                    <th>GHTT tháng T</th>
+                                    <th>GHTT tháng T+1</th>
+                                    <th>Lắp đặt/Dịch chuyển</th>
+                                    <th>Thu hồi ONT 2B</th>
+                                    <th>Thu hồi Mesh</th>
+                                    <th>Xử Lý Suy Hao</th>
+                                    <th>Sửa chữa</th>
+                                    <th>B2A</th>
+                                    <th>Tiền Suy Hao</th>
+                                    <th>Tổng Điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Account Panel -->
+                <section id="panel-account" class="panel">
+                    <h2>Tài Khoản Cá Nhân</h2>
+                    <div class="admin-grid mt-4">
+                        <div class="card glass-panel" style="flex:1">
+                            <h3>Thông Tin Công Việc</h3>
+                            <p><strong>Họ và tên:</strong> <span id="accName">-</span></p>
+                            <p><strong>Số CCCD:</strong> <span id="accCCCD">-</span></p>
+                            <p><strong>Phân quyền:</strong> <span id="accRole" class="badge">-</span></p>
+                        </div>
+                        <div class="card glass-panel" style="flex:1">
+                            <h3>Đổi Mật Khẩu</h3>
+                            <form id="changePasswordForm" class="mt-2">
+                                <div class="form-group">
+                                    <label>Mật khẩu cũ</label>
+                                    <input type="password" id="cpOld" required class="form-control"
+                                        style="width:100%; padding:0.5rem">
+                                </div>
+                                <div class="form-group">
+                                    <label>Mật khẩu mới</label>
+                                    <input type="password" id="cpNew" required class="form-control"
+                                        style="width:100%; padding:0.5rem">
+                                </div>
+                                <div class="form-group">
+                                    <label>Xác nhận mật khẩu mới</label>
+                                    <input type="password" id="cpConfirm" required class="form-control"
+                                        style="width:100%; padding:0.5rem">
+                                </div>
+                                <div style="display:flex; gap:10px">
+                                    <button type="submit" class="btn btn-primary">Xác Nhận</button>
+                                    <button type="button" class="btn btn-outline"
+                                        onclick="document.getElementById('changePasswordForm').reset()">Hủy Bỏ</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Admin Panel -->
+                <section id="panel-admin" class="panel">
+                    <h2>Quản Trị Hệ Thống</h2>
+                    <div class="admin-grid mt-4">
+                        <div class="card glass-panel">
+                            <h3>Cập nhật Danh sách Người dùng</h3>
+                            <p>Tải lên File Excel định dạng gồm: STT, Tên đăng nhập, Password, Phân quyền.</p>
+                            <form id="uploadUsersForm" class="mt-2">
+                                <input type="file" id="fileExcel" accept=".xlsx, .xls" required>
+                                <button type="submit" class="btn btn-primary mt-2">Tải Dữ Liệu Lên</button>
+                            </form>
+                        </div>
+                        <div class="card glass-panel">
+                            <h3>Đồng Bộ Google Sheets</h3>
+                            <p>Sao chép số lượng mới nhập theo realtime từ Sheet Dulieu Google sang Local Excel.</p>
+                            <button id="btnSyncGoogle" class="btn btn-success mt-2">Tiến Hành Đồng Bộ</button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="/assets/js/app.js"></script>
+</body>
+
+</html>
