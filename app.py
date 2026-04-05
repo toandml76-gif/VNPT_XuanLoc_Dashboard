@@ -11,8 +11,8 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
-LOCAL_EXCEL_PATH = r'c:\dulieu\BaoCaoNgay_TTVT_XLC OK.xlsx'
-USERS_FILE = r'c:\dulieu\vnpt-xuan-loc-dashboard\users.json'
+LOCAL_EXCEL_PATH = os.environ.get('EXCEL_PATH', 'BaoCaoNgay_TTVT_XLC OK.xlsx')
+USERS_FILE = os.environ.get('USERS_PATH', 'users.json')
 GSHEET_URL = 'https://docs.google.com/spreadsheets/d/1NqIySkzy9XXSprd6SyBuJjj7qPm4rcaCGVJZQkWEVa8/export?format=csv&gid=230040167'
 
 def get_users():
