@@ -1,8 +1,7 @@
 services:
   - type: web
-    name: vnpt-xuanloc-dashboard
+    name: vnpt-dashboard
     env: python
-    region: singapore
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
     plan: free
